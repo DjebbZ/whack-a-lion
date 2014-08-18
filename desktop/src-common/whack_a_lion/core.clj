@@ -1,19 +1,21 @@
 (ns whack-a-lion.core
   (:require [play-clj.core :refer :all]
             [play-clj.g2d :refer :all]
-            [play-clj.ui :refer :all]))
+            [play-clj.ui :refer :all]
+            [play-clj.math :refer :all]))
 
 (defn spawn-lion [screen]
-  (let [lion (texture "lion.png")]
+  (let [lion (texture "lion.png")
+        lion-w (texture! lion :get-region-width)
+        lion-h (texture! lion :get-region-height)]
     (assoc lion
-     :x (max 0 (- (rand-int (width screen)) (texture! lion :get-region-width)))
-     :y (max 0 (- (rand-int (height screen)) (texture! lion :get-region-height))))))
+     :x (max 0 (- (rand-int (width screen)) lion-w))
+     :y (max 0 (- (rand-int (height screen)) lion-h))
+     :width lion-w :height lion-h)))
 
-(defn on-lion? [input-x input-y e]
-   (and (> input-x (:x e))
-        (< input-x (+ (:x e) (texture! e :get-region-width)))
-        (> input-y (:y e))
-        (< input-y (+ (:y e) (texture! e :get-region-height)))))
+(defn on-lion? [input-x input-y {:keys [x y width height] :as e}]
+  (-> (rectangle x y width height)
+      (rectangle! :contains input-x input-y)))
 
 (defn touched-lion [{:keys [x y]} entities]
   (-> (filter (partial on-lion? x y)
@@ -23,8 +25,8 @@
 (defscreen main-screen
   :on-show
   (fn [screen entities]
-    (update! screen :renderer (stage))
-    (add-timer! screen :spawn-lion 1 1)
+    (update! screen :renderer (stage) :camera (orthographic))
+    (add-timer! screen :spawn-lion 1 4)
     (spawn-lion screen))
 
   :on-render
@@ -44,7 +46,12 @@
           touched-lion (touched-lion coords entities)]
       (if touched-lion
         (remove #(= touched-lion %) entities)
-        entities))))
+        entities)))
+
+  :on-resize
+  (fn [screen entities]
+    (width! screen (* 4 256))
+    entities))
 
 (defgame whack-a-lion
   :on-create
