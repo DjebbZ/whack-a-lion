@@ -13,3 +13,12 @@ A play-clj game in which ... well, that part is up to you.
 ## Building
 
 All projects can be built using [Nightcode](https://nightcode.info/), or on the command line using [Leiningen](https://github.com/technomancy/leiningen) with the [lein-droid](https://github.com/clojure-android/lein-droid) and [lein-fruit](https://github.com/oakes/lein-fruit) plugins.
+
+## REPL : handling exceptions
+
+(play-clj.core/set-screen-wrapper! (fn [screen screen-fn]
+                       (try (screen-fn)
+                         (catch Exception e
+                           (.printStackTrace e)
+                           (Thread/sleep 1000)
+                           (play-clj.core/set-screen! whack-a-lion.core/whack-a-lion whack-a-lion.core/main-screen)))))
