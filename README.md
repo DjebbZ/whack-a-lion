@@ -16,9 +16,11 @@ All projects can be built using [Nightcode](https://nightcode.info/), or on the 
 
 ## REPL : handling exceptions
 
+``` clojure
 (play-clj.core/set-screen-wrapper! (fn [screen screen-fn]
                        (try (screen-fn)
                          (catch Exception e
                            (.printStackTrace e)
                            (Thread/sleep 1000)
-                           (play-clj.core/set-screen! whack-a-lion.core/whack-a-lion whack-a-lion.core/main-screen)))))
+                           (play-clj.core/set-screen! whack-a-lion.core/whack-a-lion whack-a-lion.core/main-screen whack-a-lion.core/score-screen)))))
+```
