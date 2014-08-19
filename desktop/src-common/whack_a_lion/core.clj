@@ -40,17 +40,14 @@
            (fn [screen entities]
              (update! screen :renderer (stage) :camera (orthographic))
              (add-timer! screen :spawn-lion 1 4)
-             (animation->texture screen (animation (float 0.1)
-                                                   [(texture "lion.png")
-                                                    (texture "lion.png" :flip true false)]
-                                                   :set-play-mode (play-mode :loop)))
+             (texture "lion.png")
              #_(spawn-lion screen))
 
            :on-render
            (fn [screen entities]
              (clear!)
              (render! screen [(assoc (first entities)
-                                  :angle (mod (* 60 (:total-time screen)) 360))] #_entities))
+                                  :angle (mod (* 300 (:total-time screen)) 360))] #_entities))
 
            :on-timer
            (fn [screen entities]
